@@ -23,6 +23,7 @@ from gi.repository import Gtk, Gdk
 import sys, os, enum
 import subprocess as sp
 
+
 class Tmsu:
     def __init__(self, tmsu):
         self.tmsu = tmsu
@@ -49,7 +50,7 @@ class Tmsu:
             # interactively and called from scripts. That's why we add '-n'.
             r = self._cmd('tags -n "{}"'.format(fileName))
             tag_value = []
-            for tag in r.split(':')[1].split():
+            for tag in r.split('\n')[1].split():
                 tv = tag.split("=")
                 if len(tv) > 1:
                     tag_value.append((tv[0], tv[1]))
@@ -118,6 +119,7 @@ class TagCol(enum.IntEnum):
     TAGGED = 0
     NAME = 1
     VALUE = 2
+
 
 class MyWindow(Gtk.Window):
     def __init__(self, tmsu, fileName):
@@ -353,7 +355,7 @@ class MyWindow(Gtk.Window):
         """Loads tags for the first time."""
         allTags = self.tmsu.tags()
         fileTags = self.tmsu.tags(self.fileName)
-        fileTagNames=[]
+        fileTagNames = []
         for tag in fileTags:
             self.store.append([True, tag[0], tag[1]])
             fileTagNames.append(tag[0])
@@ -376,17 +378,20 @@ class MyWindow(Gtk.Window):
         dialog.run()
         dialog.destroy()
 
-if __name__ == "__main__":
+
+def main():
+    """Entry"""
+
     err = None
     tmsu = Tmsu.findTmsu()
     if not tmsu:
         err = "tmsu executable not found!"
-    elif len(sys.argv) !=2:
+    elif len(sys.argv) != 2:
         err = "Invalid arguments."
     else:
         fileName = sys.argv[1]
         os.chdir(os.path.dirname(fileName))
-        if tmsu.info() == None:
+        if tmsu.info() is None:
             err = "No tmsu database is found."
 
 
@@ -395,9 +400,13 @@ if __name__ == "__main__":
             None, 0, Gtk.MessageType.INFO,
             Gtk.ButtonsType.OK, err)
         dialog.run()
-    else:
 
+    else:
         win = MyWindow(tmsu, sys.argv[1])
         win.connect('delete-event', Gtk.main_quit)
         win.show_all()
         Gtk.main()
+
+
+if __name__ == "__main__":
+    main()
