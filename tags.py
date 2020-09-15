@@ -19,16 +19,15 @@
 # pylint: disable=invalid-name
 # pylint: disable=unused-argument
 
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk
+
 import enum
 import os
 import shutil
 import subprocess as sp
 import sys
-
-import gi
-from gi.repository import Gdk, Gtk
-
-gi.require_version('Gtk', '3.0')
 
 
 class Tmsu:
