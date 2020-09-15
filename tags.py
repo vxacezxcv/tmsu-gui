@@ -17,6 +17,7 @@
 #
 
 # pylint: disable=invalid-name
+# pylint: disable=unused-argument
 
 import enum
 import os
@@ -139,8 +140,8 @@ class MyWindow(Gtk.Window):
 
         self.connect('key-press-event', self.on_key_press)
         self.set_size_request(300, 400)
-        self.vbox = Gtk.Box(parent = self,
-                            orientation = Gtk.Orientation.VERTICAL)
+        self.vbox = Gtk.Box(parent=self,
+                            orientation=Gtk.Orientation.VERTICAL)
         self.store = Gtk.ListStore(bool, str, str)
         self.list_widget = Gtk.TreeView(self.store)
         self.vbox.pack_start(self.list_widget, True, True, 0)
@@ -170,7 +171,7 @@ class MyWindow(Gtk.Window):
         col.set_sort_column_id(TagCol.VALUE)
         self.list_widget.append_column(col)
 
-        hbox = Gtk.Box(orientation = Gtk.Orientation.HORIZONTAL)
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
 
         # tag name edit
         self.tag_edit = Gtk.Entry()
@@ -213,11 +214,13 @@ class MyWindow(Gtk.Window):
         # toggle
         if r:
             self.store[path][TagCol.TAGGED] = not self.store[path][TagCol.TAGGED]
-            if isTagged: self.store[path][TagCol.VALUE] = ""
+            if isTagged:
+                self.store[path][TagCol.VALUE] = ""
 
     def on_tagName_edited(self, widget, path, newName):
         tagName = self.store[path][TagCol.NAME]
-        if newName == tagName: return
+        if newName == tagName:
+            return
         if self.renameTag(tagName, newName):
             self.store[path][TagCol.NAME] = newName
 
@@ -225,8 +228,10 @@ class MyWindow(Gtk.Window):
         tagName = self.store[path][TagCol.NAME]
         isTagged = self.store[path][TagCol.TAGGED]
         oldValue = self.store[path][TagCol.VALUE]
-        if value == oldValue: return
-        if isTagged:        # untag to prevent duplicate
+        if value == oldValue:
+            return
+        if isTagged:
+            # untag to prevent duplicate
             if not self.untagFile(tagName, oldValue):
                 return
         if self.tagFile(tagName, value):
