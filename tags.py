@@ -16,12 +16,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+# pylint: disable=invalid-name
 
-import sys, os, enum
+import enum
+import os
+import shutil
 import subprocess as sp
+import sys
+
+import gi
+from gi.repository import Gdk, Gtk
+
+gi.require_version('Gtk', '3.0')
 
 
 class Tmsu:
@@ -32,10 +38,14 @@ class Tmsu:
         try:
             r = self._cmd('info')
         except sp.CalledProcessError as e:
-            if e.returncode == 1: # database doesn't exist
+            if e.returncode == 1:
+                # database doesn't exist
                 return None
         lines = r.splitlines()
-        def psplit(l): return map(lambda x: x.strip(), l.split(':'))
+
+        def psplit(l):
+            return map(lambda x: x.strip(), l.split(':'))
+
         d = dict(map(psplit, lines))
 
         return {'root': d['Root path'],
@@ -107,7 +117,6 @@ class Tmsu:
 
     @staticmethod
     def findTmsu():
-        import shutil
         tmsu =  shutil.which("tmsu")
         if tmsu:
             return Tmsu(tmsu)
