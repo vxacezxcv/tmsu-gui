@@ -58,17 +58,17 @@ class Tmsu:
         if fileName:
             # Note: tmsu behaves differently for 'tags' command when used
             # interactively and called from scripts. That's why we add '-n'.
-            r = self._cmd('tags -n "{}"'.format(fileName))
+            r = self._cmd('tags -n never "{}"'.format(fileName))
             tag_value = []
-            for tag in r.split('\n')[1].split():
+            for tag in r.rstrip('\n').split('\n'):
+                print(tag)
                 tv = tag.split("=")
                 if len(tv) > 1:
                     tag_value.append((tv[0], tv[1]))
                 else:
                     tag_value.append((tv[0], ""))
             return tag_value
-        else:
-            return self._cmd('tags').splitlines()
+        return self._cmd('tags').splitlines()
 
     def tag(self, fileName, tagName, value=None):
         try:
@@ -117,7 +117,7 @@ class Tmsu:
 
     @staticmethod
     def findTmsu():
-        tmsu =  shutil.which("tmsu")
+        tmsu = shutil.which("tmsu")
         if tmsu:
             return Tmsu(tmsu)
         else:
