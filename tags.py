@@ -113,7 +113,7 @@ class Tmsu:
             return False
 
     def _cmd(self, cmd):
-        return sp.check_output('tmsu ' + cmd, shell=True).decode('utf-8')
+        return sp.check_output('tmsu --database ~/.tmsu/db ' + cmd, shell=True).decode('utf-8')
 
     @staticmethod
     def findTmsu():
